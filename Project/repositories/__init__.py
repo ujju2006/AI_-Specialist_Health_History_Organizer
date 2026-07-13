@@ -1,0 +1,16 @@
+from app.repositories.repositories import (
+    user_repo,
+    role_repo,
+    permission_repo,
+    condition_repo,
+    medication_repo,
+    allergy_repo,
+    visit_repo,
+    vaccination_repo,
+    vitals_repo,
+    appointment_repo,
+    contact_repo,
+    document_repo,
+    audit_repo,
+    pref_repo,
+)

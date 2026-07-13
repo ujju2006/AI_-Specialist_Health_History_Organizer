@@ -1,0 +1,27 @@
+version: '3.8'
+
+services:
+  web-health-service:
+    container_name: health_history_organizer
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "8000:8000"
+    volumes:
+      - health_storage_volume:/app/database
+      - health_uploads_volume:/app/uploads
+    environment:
+      - DATABASE_URL=sqlite:////app/database/health_database.db
+      - UPLOAD_DIR=/app/uploads
+      - SECRET_KEY=8f91a5db4e9d0dbe9a73bd8728dcd93bc5c88ea07da85b46d0a79fe9f33b1e3e
+      - RATE_LIMIT_PER_MINUTE=60
+      - ENVIRONMENT=production
+      - DEBUG=false
+    restart: always
+
+volumes:
+  health_storage_volume:
+    driver: local
+  health_uploads_volume:
+    driver: local

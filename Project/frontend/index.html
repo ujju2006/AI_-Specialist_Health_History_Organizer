@@ -1,0 +1,1843 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HealthVault Pro - Enterprise Healthcare Portal</title>
+    <link rel="stylesheet" href="css/styles.css">
+    <!-- Google Fonts: Inter & Plus Jakarta Sans -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+    <!-- 1. AUTHENTICATION FLOW CONTAINER -->
+    <div id="auth-flow-container" class="auth-wrapper">
+        <!-- Login Card -->
+        <div id="card-login" class="auth-card">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i data-lucide="shield-plus"></i>
+                </div>
+                <h2 class="auth-title">HealthVault Pro Vizag</h2>
+                <p class="auth-subtitle">Visakhapatnam District Enterprise EHR & ICU Medical Grid</p>
+            </div>
+
+            <form id="form-login-credentials">
+                <div class="form-group">
+                    <label class="form-label" for="login-email-input">Email or Username</label>
+                    <input type="text" id="login-email-input" class="form-input" placeholder="enter user account..." required autocomplete="username">
+                </div>
+                <div class="form-group">
+                    <label class="form-label" for="login-password-input">Password</label>
+                    <input type="password" id="login-password-input" class="form-input" placeholder="••••••••" required autocomplete="current-password">
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 8px;">
+                    Sign In to Portal
+                </button>
+            </form>
+
+            <!-- Quick Development Demo Account Switcher -->
+            <div class="demo-accounts-box">
+                <div class="demo-title">Demo Healthcare Network (Visakhapatnam) — Quick Demo Logins</div>
+                <div class="demo-grid" style="grid-template-columns: repeat(2, 1fr); gap: 8px;">
+                    <button type="button" class="demo-btn" id="btn-demo-patient">
+                        <i data-lucide="user"></i> Spoorthi Verma (Urology Recov.)
+                    </button>
+                    <button type="button" class="demo-btn" id="btn-demo-emergency" style="border-color: rgba(239, 68, 68, 0.4); color: #ef4444;">
+                        <i data-lucide="alert-circle"></i> Ramesh Rao (Emergency Neuro)
+                    </button>
+                    <button type="button" class="demo-btn" id="btn-demo-doctor">
+                        <i data-lucide="stethoscope"></i> Dr. Rohan Sharma (Urology)
+                    </button>
+                    <button type="button" class="demo-btn" id="btn-demo-doctor-neuro">
+                        <i data-lucide="activity"></i> Dr. Priya Menon (Neuro)
+                    </button>
+                    <button type="button" class="demo-btn" id="btn-demo-admin" style="grid-column: span 2;">
+                        <i data-lucide="shield"></i> Vizag System Administrator
+                    </button>
+                </div>
+            </div>
+
+            <div style="text-align: center; margin-top: 24px; font-size: 13px;">
+                <span class="text-secondary">Don't have an account?</span>
+                <a href="javascript:void(0);" id="toggle-to-register" class="font-semibold">Register Patient Profile</a>
+            </div>
+        </div>
+
+        <!-- Register Card -->
+        <div id="card-register" class="auth-card hidden">
+            <div class="auth-header">
+                <div class="auth-logo">
+                    <i data-lucide="user-plus"></i>
+                </div>
+                <h2 class="auth-title">Patient Registration</h2>
+                <p class="auth-subtitle">Create your secure Personal Health Record profile</p>
+            </div>
+
+            <form id="form-register-new-user">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">First Name</label>
+                        <input type="text" id="reg-first-name" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Last Name</label>
+                        <input type="text" id="reg-last-name" class="form-input" required>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Email Address</label>
+                    <input type="email" id="reg-email-input" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Password</label>
+                    <input type="password" id="reg-password-input" class="form-input" required>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Date of Birth</label>
+                        <input type="date" id="reg-dob" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Gender</label>
+                        <select id="reg-gender" class="form-input">
+                            <option value="Female">Female</option>
+                            <option value="Male">Male</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn-primary" style="width: 100%; margin-top: 12px;">
+                    Create Patient Profile
+                </button>
+            </form>
+
+            <div style="text-align: center; margin-top: 24px; font-size: 13px;">
+                <span class="text-secondary">Already registered?</span>
+                <a href="javascript:void(0);" id="toggle-to-login" class="font-semibold">Sign In</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- 2. APP WORKSPACE CONTAINER -->
+    <div id="app-workspace-container" class="app-shell hidden">
+        
+        <!-- Fixed Left Sidebar -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <div class="brand-icon">
+                    <i data-lucide="activity" style="color: #FFFFFF; width: 22px; height: 22px;"></i>
+                </div>
+                <div>
+                    <div class="brand-text">HealthVault Vizag</div>
+                    <span class="brand-subtext">Visakhapatnam Medical Grid</span>
+                </div>
+            </div>
+
+            <div class="sidebar-content">
+                <!-- 1. PATIENT SIDEBAR MENU -->
+                <div id="sidebar-menu-patient">
+                    <div class="nav-group-label">Overview</div>
+                    <div class="nav-menu">
+                        <button class="nav-item active" id="nav-dashboard">
+                            <i data-lucide="layout-dashboard"></i> Health Dashboard
+                        </button>
+                    </div>
+
+                    <div class="nav-group-label">Health Records</div>
+                    <div class="nav-menu">
+                        <button class="nav-item" id="nav-vitals">
+                            <i data-lucide="heart-pulse"></i> Vital Metrics
+                        </button>
+                        <button class="nav-item" id="nav-conditions">
+                            <i data-lucide="stethoscope"></i> Medical Conditions
+                        </button>
+                        <button class="nav-item" id="nav-medications">
+                            <i data-lucide="pill"></i> Medications
+                        </button>
+                        <button class="nav-item" id="nav-visits">
+                            <i data-lucide="calendar"></i> Appointments & Visits
+                        </button>
+                        <button class="nav-item" id="nav-vaccinations">
+                            <i data-lucide="shield-check"></i> Immunizations
+                        </button>
+                        <button class="nav-item" id="nav-documents">
+                            <i data-lucide="file-text"></i> Reports & Documents
+                        </button>
+                    </div>
+
+                    <div class="nav-group-label">Emergency & Tools</div>
+                    <div class="nav-menu">
+                        <button class="nav-item" id="nav-emergency">
+                            <i data-lucide="alert-triangle" style="color: var(--danger-color);"></i> Emergency Med Card
+                        </button>
+                        <button class="nav-item" id="nav-settings">
+                            <i data-lucide="settings"></i> System Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 2. DOCTOR SIDEBAR MENU -->
+                <div id="sidebar-menu-doctor" class="hidden">
+                    <div class="nav-group-label">Physician Workspace</div>
+                    <div class="nav-menu">
+                        <button class="nav-item active" id="nav-doctor-overview">
+                            <i data-lucide="activity"></i> Triage & Overview
+                        </button>
+                        <button class="nav-item" id="nav-doctor-patients">
+                            <i data-lucide="users"></i> Patient EHR Review
+                        </button>
+                    </div>
+
+                    <div class="nav-group-label">Clinical Tools</div>
+                    <div class="nav-menu">
+                        <button class="nav-item" id="nav-doctor-consults">
+                            <i data-lucide="file-plus"></i> Consult Notes & e-Rx
+                        </button>
+                        <button class="nav-item" id="nav-doctor-schedule">
+                            <i data-lucide="calendar-check"></i> Schedule & Appointments
+                        </button>
+                        <button class="nav-item" id="nav-settings-doc">
+                            <i data-lucide="settings"></i> System Settings
+                        </button>
+                    </div>
+                </div>
+
+                <!-- 3. SYSTEM ADMINISTRATOR SIDEBAR MENU -->
+                <div id="sidebar-menu-admin" class="hidden">
+                    <div class="nav-group-label">Operations Unit</div>
+                    <div class="nav-menu">
+                        <button class="nav-item active" id="nav-admin-dashboard">
+                            <i data-lucide="bar-chart-3"></i> Operations & Revenue
+                        </button>
+                        <button class="nav-item" id="nav-admin-inquiries">
+                            <i data-lucide="mail-forward"></i> Inquiry & Email Forwarding
+                        </button>
+                    </div>
+
+                    <div class="nav-group-label">Community Governance</div>
+                    <div class="nav-menu">
+                        <button class="nav-item" id="nav-admin-community">
+                            <i data-lucide="crown"></i> Upgraded vs Free Community
+                        </button>
+                    </div>
+
+                    <div class="nav-group-label">System Governance</div>
+                    <div class="nav-menu">
+                        <button class="nav-item" id="nav-admin-audit">
+                            <i data-lucide="shield-alert"></i> Security & Audit Logs
+                        </button>
+                        <button class="nav-item" id="nav-settings-admin">
+                            <i data-lucide="settings"></i> System Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dynamic User Footer -->
+            <div class="sidebar-footer">
+                <div class="user-profile-box">
+                    <div class="user-avatar" id="sidebar-avatar-initials">--</div>
+                    <div class="user-info">
+                        <div class="user-name" id="sidebar-user-fullname">Loading Profile...</div>
+                        <span class="user-role-badge" id="sidebar-user-role">Healthcare Portal</span>
+                    </div>
+                </div>
+                <button class="btn-logout" id="btn-logout">
+                    <i data-lucide="log-out" style="width: 16px; height: 16px; color: var(--danger-color);"></i> End Session
+                </button>
+            </div>
+        </aside>
+
+        <!-- Main Wrapper -->
+        <div class="main-wrapper">
+            
+            <!-- Sticky Top Navbar -->
+            <header class="top-navbar">
+                <div class="navbar-left">
+                    <div class="search-input-box">
+                        <i data-lucide="search"></i>
+                        <input type="text" id="global-search-input" class="navbar-search" placeholder="Search medical records, medications, reports... Ctrl + /">
+                    </div>
+                </div>
+
+                <div class="navbar-right">
+                    <div class="date-badge" id="navbar-date-badge">
+                        <i data-lucide="calendar" style="width: 16px; height: 16px;"></i>
+                        <span id="current-date-text">Mon, 07 Jul 2026</span>
+                    </div>
+
+                    <button class="btn-icon-nav" id="btn-toggle-theme" title="Theme Settings">
+                        <i data-lucide="sun" id="theme-btn-icon" style="width: 18px; height: 18px;"></i>
+                    </button>
+
+                    <button class="btn-icon-nav" style="position: relative;" title="Notifications">
+                        <i data-lucide="bell" style="width: 18px; height: 18px;"></i>
+                        <span class="notif-dot"></span>
+                    </button>
+
+                    <button class="btn-primary-action" id="btn-quick-log-vitals">
+                        <i data-lucide="plus" style="width: 16px; height: 16px;"></i> Log Vitals
+                    </button>
+                </div>
+            </header>
+
+            <!-- Content Area -->
+            <main class="content-area">
+                
+                <!-- Hidden Title & Subtitle labels required by existing JS SPA routing -->
+                <div style="display: none;">
+                    <span id="page-title-label">Dashboard</span>
+                    <span id="page-subtitle-label">Welcome</span>
+                    <span id="sidebar-user-email"></span>
+                </div>
+
+                <!-- Global Search Results Panel -->
+                <section id="search-results-panel" class="panel-card hidden" style="margin-bottom: 24px; border-color: var(--primary-blue);">
+                    <div class="panel-header" style="margin-bottom: 12px;">
+                        <h3 class="panel-title">Search Results</h3>
+                        <button class="btn-secondary" id="btn-close-search" style="padding: 4px 10px; font-size: 12px;">Close</button>
+                    </div>
+                    <div id="search-matches-target"></div>
+                </section>
+
+                <!-- PANE 1: HEALTH DASHBOARD -->
+                <section id="pane-dashboard" class="content-pane">
+                    
+                    <!-- Welcome Greeting -->
+                    <div class="welcome-header">
+                        <h1 id="dynamic-greeting-title" class="greeting-title">Good Morning 👋</h1>
+                        <p id="dynamic-greeting-sub" class="greeting-subtitle">Here's your health overview for today.</p>
+                    </div>
+
+                    <!-- 5 Metric Cards Top Row -->
+                    <div class="metrics-grid">
+                        <!-- Card 1: Blood Pressure -->
+                        <div class="metric-card">
+                            <div class="metric-card-top">
+                                <div class="metric-icon-box">
+                                    <i data-lucide="activity"></i>
+                                </div>
+                                <span class="metric-label">Blood Pressure</span>
+                            </div>
+                            <div class="metric-value-box">
+                                <span class="metric-number" id="dash-val-bp">120/80</span>
+                                <span class="metric-unit">mmHg</span>
+                            </div>
+                            <div class="metric-card-bottom">
+                                <span class="status-badge normal" id="dash-status-bp">Normal</span>
+                                <span class="trend-indicator">↑ 2% vs last month</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 2: Weight -->
+                        <div class="metric-card">
+                            <div class="metric-card-top">
+                                <div class="metric-icon-box green">
+                                    <i data-lucide="scale"></i>
+                                </div>
+                                <span class="metric-label">Weight</span>
+                            </div>
+                            <div class="metric-value-box">
+                                <span class="metric-number" id="dash-val-weight">54</span>
+                                <span class="metric-unit">kg</span>
+                            </div>
+                            <div class="metric-card-bottom">
+                                <span class="status-badge normal">Healthy</span>
+                                <span class="trend-indicator">↓ 0.5kg this week</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 3: Blood Sugar -->
+                        <div class="metric-card">
+                            <div class="metric-card-top">
+                                <div class="metric-icon-box amber">
+                                    <i data-lucide="droplet"></i>
+                                </div>
+                                <span class="metric-label">Blood Sugar</span>
+                            </div>
+                            <div class="metric-value-box">
+                                <span class="metric-number" id="dash-val-sugar">95</span>
+                                <span class="metric-unit">mg/dL</span>
+                            </div>
+                            <div class="metric-card-bottom">
+                                <span class="status-badge normal">Normal</span>
+                                <span class="trend-indicator">Stable baseline</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 4: Heart Rate -->
+                        <div class="metric-card">
+                            <div class="metric-card-top">
+                                <div class="metric-icon-box red">
+                                    <i data-lucide="heart"></i>
+                                </div>
+                                <span class="metric-label">Heart Rate</span>
+                            </div>
+                            <div class="metric-value-box">
+                                <span class="metric-number" id="dash-val-pulse">72</span>
+                                <span class="metric-unit">bpm</span>
+                            </div>
+                            <div class="metric-card-bottom">
+                                <span class="status-badge normal">Normal</span>
+                                <span class="trend-indicator">Rested average</span>
+                            </div>
+                        </div>
+
+                        <!-- Card 5: BMI -->
+                        <div class="metric-card">
+                            <div class="metric-card-top">
+                                <div class="metric-icon-box green">
+                                    <i data-lucide="user-check"></i>
+                                </div>
+                                <span class="metric-label">BMI</span>
+                            </div>
+                            <div class="metric-value-box">
+                                <span class="metric-number" id="dash-val-bmi">22.3</span>
+                                <span class="metric-unit">kg/m²</span>
+                            </div>
+                            <div class="metric-card-bottom">
+                                <span class="status-badge normal">Healthy</span>
+                                <span class="trend-indicator">Optimal range</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Middle Grid: Charts & Wellness Score -->
+                    <div class="middle-grid">
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <div>
+                                    <h3 class="panel-title">Health Trends</h3>
+                                    <p class="panel-subtitle">Overview of your key physiological vitals</p>
+                                </div>
+                                <select class="form-input" style="width: auto; height: 36px; font-size: 13px;">
+                                    <option>Last 7 Days</option>
+                                    <option>Last 30 Days</option>
+                                    <option>Last 6 Months</option>
+                                </select>
+                            </div>
+                            <div class="chart-container">
+                                <canvas id="chart-dashboard-trends"></canvas>
+                            </div>
+                        </div>
+
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3 class="panel-title">Wellness Index</h3>
+                                <span class="nav-badge">Computed</span>
+                            </div>
+                            <div class="wellness-container">
+                                <div class="gauge-circle">
+                                    <div class="gauge-inner">
+                                        <span class="gauge-score">76</span>
+                                        <span class="gauge-total">/100</span>
+                                        <span class="gauge-label">Good</span>
+                                    </div>
+                                </div>
+                                <p class="wellness-summary-text">
+                                    Great job! Your overall physiological health is good. Keep maintaining your active lifestyle and diet to stay healthy.
+                                </p>
+                                <button type="button" class="btn-secondary-action" id="btn-goto-vitals-charts">
+                                    View Full Analytics Report →
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Grid: 3 Columns -->
+                    <div class="bottom-grid">
+                        <!-- Col 1: Upcoming Appointments -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3 class="panel-title">Upcoming Appointments</h3>
+                                <a href="javascript:void(0);" onclick="switchPane('visits')" style="font-size: 13px; font-weight: 600;">View All</a>
+                            </div>
+                            <div id="dashboard-appointments-list" style="flex: 1;">
+                                <div class="list-item-row">
+                                    <div class="list-icon"><i data-lucide="user"></i></div>
+                                    <div class="list-content">
+                                        <div class="list-title">General Physician</div>
+                                        <div class="list-subtitle">Dr. Rajesh Kumar</div>
+                                    </div>
+                                    <div class="list-meta">09 Jul 2026<br><span class="text-muted" style="font-size: 11px;">10:30 AM</span></div>
+                                </div>
+                                <div class="list-item-row">
+                                    <div class="list-icon" style="background: var(--danger-bg); color: var(--danger-color);"><i data-lucide="heart"></i></div>
+                                    <div class="list-content">
+                                        <div class="list-title">Cardiology Checkup</div>
+                                        <div class="list-subtitle">Dr. Priya Sharma</div>
+                                    </div>
+                                    <div class="list-meta">15 Jul 2026<br><span class="text-muted" style="font-size: 11px;">02:00 PM</span></div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-primary" id="btn-trigger-appointment-modal" style="margin-top: 16px; width: 100%; background: var(--info-bg); color: var(--primary-blue); box-shadow: none;">
+                                + Book New Appointment
+                            </button>
+                        </div>
+
+                        <!-- Col 2: Recent Medications -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3 class="panel-title">Recent Medications</h3>
+                                <a href="javascript:void(0);" onclick="switchPane('medications')" style="font-size: 13px; font-weight: 600;">View All</a>
+                            </div>
+                            <div id="dashboard-meds-list" style="flex: 1;">
+                                <div class="list-item-row">
+                                    <div class="list-icon" style="background: var(--warning-bg); color: var(--warning-color);"><i data-lucide="pill"></i></div>
+                                    <div class="list-content">
+                                        <div class="list-title">Metformin 500mg</div>
+                                        <div class="list-subtitle">1 tablet - After Food</div>
+                                    </div>
+                                    <div class="list-meta text-success">08:00 AM</div>
+                                </div>
+                                <div class="list-item-row">
+                                    <div class="list-icon" style="background: var(--info-bg); color: var(--primary-blue);"><i data-lucide="pill"></i></div>
+                                    <div class="list-content">
+                                        <div class="list-title">Amlodipine 5mg</div>
+                                        <div class="list-subtitle">1 tablet - After Food</div>
+                                    </div>
+                                    <div class="list-meta text-success">08:00 PM</div>
+                                </div>
+                                <div class="list-item-row">
+                                    <div class="list-icon" style="background: var(--success-bg); color: var(--success-color);"><i data-lucide="sun"></i></div>
+                                    <div class="list-content">
+                                        <div class="list-title">Vitamin D3</div>
+                                        <div class="list-subtitle">1 tablet - After Food</div>
+                                    </div>
+                                    <div class="list-meta text-success">09:00 AM</div>
+                                </div>
+                            </div>
+                            <button type="button" class="btn-primary" id="btn-trigger-add-medication-modal" style="margin-top: 16px; width: 100%; background: var(--info-bg); color: var(--primary-blue); box-shadow: none;">
+                                + Add Medication
+                            </button>
+                        </div>
+
+                        <!-- Col 3: Alerts & Reminders / Educational Insights -->
+                        <div class="panel-card">
+                            <div class="panel-header">
+                                <h3 class="panel-title">Alerts & Reminders</h3>
+                                <span class="status-badge normal">Clinical Support</span>
+                            </div>
+                            <div id="dashboard-insights-list" style="flex: 1;">
+                                <div class="list-item-row">
+                                    <div class="list-icon" style="background: var(--warning-bg); color: var(--warning-color);"><i data-lucide="bell"></i></div>
+                                    <div class="list-content">
+                                        <div class="list-title">Medication Reminder</div>
+                                        <div class="list-subtitle">Amlodipine 5mg is due in 3 hours.</div>
+                                    </div>
+                                    <div class="list-meta">05:00 PM</div>
+                                </div>
+                                <div class="list-item-row">
+                                    <div class="list-icon" style="background: var(--info-bg); color: var(--primary-blue);"><i data-lucide="droplet"></i></div>
+                                    <div class="list-content">
+                                        <div class="list-title">Hydration Reminder</div>
+                                        <div class="list-subtitle">Ensure adequate water intake today.</div>
+                                    </div>
+                                    <div class="list-meta">09:30 AM</div>
+                                </div>
+                                <div class="list-item-row">
+                                    <div class="list-icon" style="background: var(--success-bg); color: var(--success-color);"><i data-lucide="sparkles"></i></div>
+                                    <div class="list-content">
+                                        <div class="list-title">Health Tip</div>
+                                        <div class="list-subtitle">Walking 30 minutes daily improves cardiac tone.</div>
+                                    </div>
+                                    <div class="list-meta">08:00 AM</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANE 2: VITALS METRICS -->
+                <section id="pane-vitals" class="content-pane hidden">
+                    <div class="panel-card" style="margin-bottom: 24px;">
+                        <h3 class="panel-title" style="margin-bottom: 16px;">Log New Physiological Vital Reading</h3>
+                        <form id="form-add-vitals">
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 16px;">
+                                <div class="form-group">
+                                    <label class="form-label">Systolic BP (mmHg)</label>
+                                    <input type="number" id="vital-systolic" class="form-input" placeholder="120">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Diastolic BP (mmHg)</label>
+                                    <input type="number" id="vital-diastolic" class="form-input" placeholder="80">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Weight (kg)</label>
+                                    <input type="number" step="0.1" id="vital-weight" class="form-input" placeholder="70.5">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Height (cm)</label>
+                                    <input type="number" step="0.1" id="vital-height" class="form-input" placeholder="175">
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 20px;">
+                                <div class="form-group">
+                                    <label class="form-label">Blood Sugar (mg/dL)</label>
+                                    <input type="number" id="vital-sugar" class="form-input" placeholder="95">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Pulse Rate (bpm)</label>
+                                    <input type="number" id="vital-pulse" class="form-input" placeholder="72">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Temperature (°C)</label>
+                                    <input type="number" step="0.1" id="vital-temp" class="form-input" placeholder="36.8">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">O2 Saturation (%)</label>
+                                    <input type="number" id="vital-oxygen" class="form-input" placeholder="98">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Record Vitals Reading</button>
+                        </form>
+                    </div>
+
+                    <div class="panel-card">
+                        <h3 class="panel-title" style="margin-bottom: 16px;">Vitals History Log</h3>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date Recorded</th>
+                                        <th>BP (Sys/Dia)</th>
+                                        <th>Weight / BMI</th>
+                                        <th>Blood Sugar</th>
+                                        <th>Pulse</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vitals-list-target">
+                                    <tr><td colspan="6" class="text-secondary" style="text-align: center;">Loading vitals history...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANE 3: CONDITIONS LOG -->
+                <section id="pane-conditions" class="content-pane hidden">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3 class="panel-title">Medical Conditions & Diagnoses</h3>
+                                <p class="panel-subtitle">Comprehensive registry of chronic and acute medical conditions</p>
+                            </div>
+                            <button class="btn-primary" id="btn-trigger-add-condition-modal">
+                                <i data-lucide="plus"></i> Log Medical Condition
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Condition Name</th>
+                                        <th>Status</th>
+                                        <th>Date Diagnosed</th>
+                                        <th>Clinical Notes</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="conditions-list-target">
+                                    <tr><td colspan="5" class="text-secondary" style="text-align: center;">Loading conditions log...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANE 4: MEDICATIONS -->
+                <section id="pane-medications" class="content-pane hidden">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3 class="panel-title">Prescription Medications</h3>
+                                <p class="panel-subtitle">Active therapies, dosages, and adherence tracking</p>
+                            </div>
+                            <button class="btn-primary" id="btn-trigger-add-medication-modal-2" onclick="document.getElementById('modal-medication').classList.remove('hidden')">
+                                <i data-lucide="plus"></i> Record Prescription
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Medication & Dosage</th>
+                                        <th>Frequency</th>
+                                        <th>Start Date</th>
+                                        <th>Adherence</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="medications-list-target">
+                                    <tr><td colspan="6" class="text-secondary" style="text-align: center;">Loading medications...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANE 5: DOCTOR VISITS -->
+                <section id="pane-visits" class="content-pane hidden">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3 class="panel-title">Clinical Consultations & Visits</h3>
+                                <p class="panel-subtitle">History of doctor consultations and clinical recommendations</p>
+                            </div>
+                            <button class="btn-primary" id="btn-trigger-add-visit-modal">
+                                <i data-lucide="plus"></i> Log Consult Visit
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Doctor & Specialty</th>
+                                        <th>Symptoms</th>
+                                        <th>Diagnosis & Plan</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="visits-list-target">
+                                    <tr><td colspan="5" class="text-secondary" style="text-align: center;">Loading clinical visits...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANE 6: VACCINATIONS -->
+                <section id="pane-vaccinations" class="content-pane hidden">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3 class="panel-title">Immunizations & Vaccines</h3>
+                                <p class="panel-subtitle">Verified immunization records and booster schedules</p>
+                            </div>
+                            <button class="btn-primary" id="btn-trigger-add-vaccination-modal">
+                                <i data-lucide="plus"></i> Log Immunization
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Vaccine Name</th>
+                                        <th>Dose Number</th>
+                                        <th>Date Administered</th>
+                                        <th>Next Booster Due</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="vaccinations-list-target">
+                                    <tr><td colspan="6" class="text-secondary" style="text-align: center;">Loading immunization records...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANE 7: REPORTS & DOCUMENTS -->
+                <section id="pane-documents" class="content-pane hidden">
+                    <div class="panel-card">
+                        <div class="panel-header">
+                            <div>
+                                <h3 class="panel-title">Medical Reports & Documents</h3>
+                                <p class="panel-subtitle">Uploaded diagnostic lab reports, imaging, and discharge summaries</p>
+                            </div>
+                            <button class="btn-primary" id="btn-trigger-upload-doc-modal">
+                                <i data-lucide="upload"></i> Upload Report File
+                            </button>
+                        </div>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Document Title</th>
+                                        <th>Description</th>
+                                        <th>Date Uploaded</th>
+                                        <th>File Size</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="documents-list-target">
+                                    <tr><td colspan="5" class="text-secondary" style="text-align: center;">Loading medical documents...</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANE 8: EMERGENCY MED CARD -->
+                <section id="pane-emergency" class="content-pane hidden">
+                    <div class="panel-card" style="max-width: 800px; margin: 0 auto; border-top: 6px solid var(--danger-color);">
+                        <div class="panel-header">
+                            <div>
+                                <h3 class="panel-title" style="color: var(--danger-color);"><i data-lucide="alert-triangle"></i> Emergency Medical Profile & Contacts</h3>
+                                <p class="panel-subtitle">Critical clinical data accessible for first responders and emergency care</p>
+                            </div>
+                            <button class="btn-primary" id="btn-trigger-emergency-contact-modal" style="background: var(--danger-color);">
+                                <i data-lucide="plus"></i> Add Emergency Contact
+                            </button>
+                        </div>
+                        <div style="padding: 20px; background: var(--danger-bg); border-radius: var(--radius-md); margin-bottom: 24px;">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                <div>
+                                    <span class="text-secondary" style="font-size: 12px; font-weight: 600;">PATIENT NAME</span>
+                                    <h4 id="em-card-patient-name" style="font-size: 18px; margin-top: 2px;">Loading...</h4>
+                                </div>
+                                <div>
+                                    <span class="text-secondary" style="font-size: 12px; font-weight: 600;">BLOOD GROUP & DONOR STATUS</span>
+                                    <h4 id="em-card-blood-group" style="font-size: 18px; margin-top: 2px;">O Positive (Organ Donor)</h4>
+                                </div>
+                            </div>
+                        </div>
+                        <h4 style="margin-bottom: 12px; font-size: 15px;">Registered Emergency Contacts</h4>
+                        <div class="table-container">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Contact Name</th>
+                                        <th>Relationship</th>
+                                        <th>Phone Number</th>
+                                        <th>Blood Group</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="emergency-contacts-list-target">
+                                    <tr><td colspan="5" class="text-secondary" style="text-align: center;">No emergency contacts listed.</td></tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- PANE 9: SYSTEM SETTINGS -->
+                <section id="pane-settings" class="content-pane hidden">
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 24px; max-width: 1200px;">
+                        <div class="panel-card">
+                            <h3 class="panel-title" style="margin-bottom: 20px;">Account & Profile Configuration</h3>
+                            <form id="form-update-profile">
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                    <div class="form-group">
+                                        <label class="form-label">First Name</label>
+                                        <input type="text" id="set-first-name" class="form-input" required>
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Last Name</label>
+                                        <input type="text" id="set-last-name" class="form-input" required>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="text" id="set-phone" class="form-input" placeholder="+1 (555) 000-0000">
+                                </div>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+                                    <div class="form-group">
+                                        <label class="form-label">Date of Birth</label>
+                                        <input type="date" id="set-dob" class="form-input">
+                                    </div>
+                                    <div class="form-group">
+                                        <label class="form-label">Gender</label>
+                                        <select id="set-gender" class="form-input">
+                                            <option value="Female">Female</option>
+                                            <option value="Male">Male</option>
+                                            <option value="Other">Other</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <button type="submit" class="btn-primary" style="margin-top: 12px;">Update Account Profile</button>
+                            </form>
+                        </div>
+
+                        <div class="panel-card">
+                            <h3 class="panel-title" style="margin-bottom: 20px;">Security & Alert Preferences</h3>
+                            <form id="form-change-password" style="margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--border-color);">
+                                <h4 style="font-size: 14px; margin-bottom: 12px;">Change Security Password</h4>
+                                <div class="form-group">
+                                    <label class="form-label">Current Password</label>
+                                    <input type="password" id="pwd-current" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" id="pwd-new" class="form-input" required>
+                                </div>
+                                <button type="submit" class="btn-secondary">Update Password</button>
+                            </form>
+
+                            <h4 style="font-size: 14px; margin-bottom: 12px;">Clinical Alert Preferences</h4>
+                            <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+                                <label style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                                    <input type="checkbox" id="pref-email" checked> Receive clinical alert notifications via email
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                                    <input type="checkbox" id="pref-appointments" checked> Appointment schedule reminder alerts
+                                </label>
+                                <label style="display: flex; align-items: center; gap: 10px; font-size: 14px;">
+                                    <input type="checkbox" id="pref-meds" checked> Medication adherence time reminders
+                                </label>
+                            </div>
+                            <button type="button" class="btn-primary" id="btn-save-preferences">Save Preferences</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================================= -->
+                <!-- 4. SYSTEM ADMINISTRATOR PORTAL PANES -->
+                <!-- ========================================================= -->
+
+                <!-- Admin Pane 1: Operations & Revenue Dashboard -->
+                <section id="pane-admin-dashboard" class="content-pane hidden">
+                    <!-- Top 5 Metric Cards Grid -->
+                    <div class="metrics-grid" style="grid-template-columns: repeat(5, 1fr); gap: 16px; margin-bottom: 24px;">
+                        <div class="metric-card" style="border-left: 4px solid #3b82f6;">
+                            <div class="metric-header">
+                                <span class="metric-label">Total Patients</span>
+                                <i data-lucide="users" style="color: #3b82f6;"></i>
+                            </div>
+                            <div class="metric-value" id="admin-val-patients">12,458</div>
+                            <div class="metric-status status-normal" style="color: #10b981;">+8.6% this month</div>
+                        </div>
+
+                        <div class="metric-card" style="border-left: 4px solid #10b981;">
+                            <div class="metric-header">
+                                <span class="metric-label">Active Doctors</span>
+                                <i data-lucide="user-check" style="color: #10b981;"></i>
+                            </div>
+                            <div class="metric-value" id="admin-val-doctors">327</div>
+                            <div class="metric-status status-normal" style="color: #10b981;">+5.4% this month</div>
+                        </div>
+
+                        <div class="metric-card" style="border-left: 4px solid #8b5cf6;">
+                            <div class="metric-header">
+                                <span class="metric-label">Hospitals Linked</span>
+                                <i data-lucide="building-2" style="color: #8b5cf6;"></i>
+                            </div>
+                            <div class="metric-value" id="admin-val-hospitals">5</div>
+                            <div class="metric-status status-normal" style="color: #10b981;">All systems operational</div>
+                        </div>
+
+                        <div class="metric-card" style="border-left: 4px solid #f59e0b;">
+                            <div class="metric-header">
+                                <span class="metric-label">Simulated Revenue</span>
+                                <i data-lucide="indian-rupee" style="color: #f59e0b;"></i>
+                            </div>
+                            <div class="metric-value" id="admin-val-revenue">₹ 18.45 Lakhs</div>
+                            <div class="metric-status status-normal" style="color: #10b981;">+12.7% this month</div>
+                        </div>
+
+                        <div class="metric-card" style="border-left: 4px solid #06b6d4;">
+                            <div class="metric-header">
+                                <span class="metric-label">Appointments (Today)</span>
+                                <i data-lucide="calendar" style="color: #06b6d4;"></i>
+                            </div>
+                            <div class="metric-value" id="admin-val-today">186</div>
+                            <div class="metric-status status-normal" style="color: #10b981;">+9.3% vs yesterday</div>
+                        </div>
+                    </div>
+
+                    <!-- Middle Row: 3 Analytical Charts (Consultations Trend, Revenue Overview, Membership Donut) -->
+                    <div style="display: grid; grid-template-columns: 1.2fr 1.2fr 0.8fr; gap: 20px; margin-bottom: 24px;">
+                        <!-- Chart 1: Consultations vs ICU Telemetry -->
+                        <div class="panel-card" style="display: flex; flex-direction: column;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h3 class="panel-title" style="margin: 0; font-size: 15px;">Consultations vs ICU Telemetry (Trend Analysis)</h3>
+                                <select class="form-input" style="padding: 4px 8px; font-size: 12px; width: auto;" onchange="switchAdminGraphHorizon(this.value)">
+                                    <option value="week">Past Week</option>
+                                    <option value="month" selected>Past 1 Month</option>
+                                    <option value="year">Past Year</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-height: 220px; position: relative;">
+                                <canvas id="chart-admin-operations"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 2: Revenue Analytics Overview -->
+                        <div class="panel-card" style="display: flex; flex-direction: column;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <h3 class="panel-title" style="margin: 0; font-size: 15px;">Revenue Analytics Overview</h3>
+                                <select class="form-input" style="padding: 4px 8px; font-size: 12px; width: auto;" onchange="switchAdminRevenueHorizon(this.value)">
+                                    <option value="month" selected>Past 1 Month</option>
+                                    <option value="year">Past Year</option>
+                                </select>
+                            </div>
+                            <div style="flex: 1; min-height: 220px; position: relative;">
+                                <canvas id="chart-admin-revenue"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Chart 3: Membership Distribution Donut -->
+                        <div class="panel-card" style="display: flex; flex-direction: column; justify-content: space-between; text-align: center;">
+                            <h3 class="panel-title" style="margin: 0 0 12px 0; font-size: 15px; text-align: left;">Membership Distribution</h3>
+                            <div style="height: 180px; position: relative; display: flex; align-items: center; justify-content: center;">
+                                <canvas id="chart-admin-membership"></canvas>
+                            </div>
+                            <div style="margin-top: 12px; font-size: 13px; display: flex; justify-content: space-around;">
+                                <div><span style="display:inline-block;width:10px;height:10px;background:#3b82f6;border-radius:50%;margin-right:4px;"></span><b>Upgraded Premium</b><br><span style="color:var(--text-secondary);font-size:11px;">6,842 (54.9%)</span></div>
+                                <div><span style="display:inline-block;width:10px;height:10px;background:#10b981;border-radius:50%;margin-right:4px;"></span><b>Free Community</b><br><span style="color:var(--text-secondary);font-size:11px;">5,616 (45.1%)</span></div>
+                            </div>
+                            <button type="button" class="btn-primary" style="margin-top: 16px; width: 100%; padding: 8px;" onclick="switchPane('admin-inquiries')">Manage Membership Tiers</button>
+                        </div>
+                    </div>
+
+                    <!-- Bottom Row: 3 Operational Columns (Recent Inquiries, Forward to Specialist, Compliance & Quick Actions) -->
+                    <div style="display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 20px;">
+                        <!-- Column 1: Recent Patient Inquiries -->
+                        <div class="panel-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                    <h3 class="panel-title" style="margin: 0; font-size: 15px;">Recent Patient Inquiries</h3>
+                                    <a href="javascript:void(0)" onclick="switchPane('admin-inquiries')" style="font-size: 12px; color: var(--primary-blue); font-weight: 600; text-decoration: none;">View All</a>
+                                </div>
+                                <div style="display: flex; flex-direction: column; gap: 12px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #3b82f6; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center;">SP</div>
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 13px;">Sandeep Patnaik</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">sandeep.patnaik@email.com</div>
+                                                <div style="font-size: 12px; color: var(--text-primary); margin-top: 2px;">Kidney stone treatment options and cost inquiry</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Demo Healthcare Network, Arilova</div>
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="font-size: 11px; color: var(--text-secondary);">10:24 AM</div>
+                                            <span id="dash-inq-status-1" class="badge" style="background: rgba(59,130,246,0.1); color: #3b82f6; font-size: 10px; padding: 2px 6px;">New</span>
+                                        </div>
+                                    </div>
+
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #8b5cf6; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center;">AV</div>
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 13px;">Anitha Verma</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">anitha.verma@email.com</div>
+                                                <div style="font-size: 12px; color: var(--text-primary); margin-top: 2px;">Neurology consultation for migraine issues</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Demo Healthcare Network, Sheela Nagar</div>
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="font-size: 11px; color: var(--text-secondary);">09:47 AM</div>
+                                            <span id="dash-inq-status-2" class="badge" style="background: rgba(59,130,246,0.1); color: #3b82f6; font-size: 10px; padding: 2px 6px;">New</span>
+                                        </div>
+                                    </div>
+
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #10b981; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center;">RK</div>
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 13px;">Ravi Kumar</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">ravi.kumar@email.com</div>
+                                                <div style="font-size: 12px; color: var(--text-primary); margin-top: 2px;">Annual health checkup packages</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Demo Healthcare Network, Ramnagar</div>
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="font-size: 11px; color: var(--text-secondary);">Yesterday</div>
+                                            <span class="badge badge-normal" style="font-size: 10px; padding: 2px 6px;">Replied</span>
+                                        </div>
+                                    </div>
+
+                                    <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; border-bottom: 1px solid var(--border-color);">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <div style="width: 32px; height: 32px; border-radius: 50%; background: #f59e0b; color: #fff; font-weight: 700; font-size: 12px; display: flex; align-items: center; justify-content: center;">MS</div>
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 13px;">Madhavi S.</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">madhavi.s@email.com</div>
+                                                <div style="font-size: 12px; color: var(--text-primary); margin-top: 2px;">Urology OPD appointment request</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Demo Healthcare Network, Rockdale</div>
+                                            </div>
+                                        </div>
+                                        <div style="text-align: right;">
+                                            <div style="font-size: 11px; color: var(--text-secondary);">Yesterday</div>
+                                            <span class="badge badge-warning" style="font-size: 10px; padding: 2px 6px;">Forwarded</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+                                <a href="javascript:void(0)" onclick="switchPane('admin-inquiries')" style="font-size: 13px; font-weight: 600; color: var(--primary-blue); text-decoration: none;">View All Inquiries & Manage</a>
+                            </div>
+                        </div>
+
+                        <!-- Column 2: Forward to Specialist -->
+                        <div class="panel-card" style="display: flex; flex-direction: column; justify-content: space-between;">
+                            <div>
+                                <h3 class="panel-title" style="margin: 0 0 4px 0; font-size: 15px;">Forward to Specialist</h3>
+                                <p style="font-size: 12px; color: var(--text-secondary); margin: 0 0 16px 0;">Select a specialist to forward the selected inquiry</p>
+
+                                <div style="display: flex; flex-direction: column; gap: 14px;">
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <img src="https://images.unsplash.com/photo-1612349317150-e413f6a5b16d?w=100&auto=format&fit=crop&q=80" alt="Doctor" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 13px;">Dr. Rohan Sharma</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Urology & Renal Surgery</div>
+                                                <div style="font-size: 11px; color: #3b82f6;">Demo Healthcare Network</div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 11px; color: #3b82f6; border-color: #3b82f6;" onclick="showToast('Inquiry forwarded to Dr. Rohan Sharma.', 'success')">Forward</button>
+                                    </div>
+
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <img src="https://images.unsplash.com/photo-1594824476967-48c8b964273f?w=100&auto=format&fit=crop&q=80" alt="Doctor" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 13px;">Dr. Priya Menon</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Neurology & Neuro-ICU</div>
+                                                <div style="font-size: 11px; color: #3b82f6;">Demo Healthcare Network</div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 11px; color: #3b82f6; border-color: #3b82f6;" onclick="showToast('Inquiry forwarded to Dr. Priya Menon.', 'success')">Forward</button>
+                                    </div>
+
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <img src="https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&auto=format&fit=crop&q=80" alt="Doctor" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 13px;">Dr. Anjali Rao</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Cardiology Specialist</div>
+                                                <div style="font-size: 11px; color: #3b82f6;">Demo Healthcare Network</div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 11px; color: #3b82f6; border-color: #3b82f6;" onclick="showToast('Inquiry forwarded to Dr. Anjali Rao.', 'success')">Forward</button>
+                                    </div>
+
+                                    <div style="display: flex; justify-content: space-between; align-items: center;">
+                                        <div style="display: flex; gap: 10px; align-items: center;">
+                                            <img src="https://images.unsplash.com/photo-1622253692010-333f2da6031d?w=100&auto=format&fit=crop&q=80" alt="Doctor" style="width: 36px; height: 36px; border-radius: 50%; object-fit: cover;">
+                                            <div>
+                                                <div style="font-weight: 600; font-size: 13px;">Dr. Vikram Mehta</div>
+                                                <div style="font-size: 11px; color: var(--text-secondary);">Orthopedic Surgery</div>
+                                                <div style="font-size: 11px; color: #3b82f6;">Demo Healthcare Network</div>
+                                            </div>
+                                        </div>
+                                        <button type="button" class="btn-secondary" style="padding: 4px 10px; font-size: 11px; color: #3b82f6; border-color: #3b82f6;" onclick="showToast('Inquiry forwarded to Dr. Vikram Mehta.', 'success')">Forward</button>
+                                    </div>
+                                </div>
+                            </div>
+                            <div style="text-align: center; margin-top: 16px; border-top: 1px solid var(--border-color); padding-top: 12px;">
+                                <a href="javascript:void(0)" onclick="switchPane('admin-users')" style="font-size: 13px; font-weight: 600; color: var(--primary-blue); text-decoration: none;">View All Specialists</a>
+                            </div>
+                        </div>
+
+                        <!-- Column 3: System Compliance (OWASP Top 10) + Quick Actions -->
+                        <div style="display: flex; flex-direction: column; gap: 16px;">
+                            <div class="panel-card">
+                                <h3 class="panel-title" style="margin: 0 0 12px 0; font-size: 15px;">System Compliance (OWASP Top 10)</h3>
+                                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                                    <div style="width: 36px; height: 36px; border-radius: 8px; background: rgba(16, 185, 129, 0.1); display: flex; align-items: center; justify-content: center; color: #10b981;">
+                                        <i data-lucide="shield-check" style="width: 20px; height: 20px;"></i>
+                                    </div>
+                                    <div>
+                                        <div style="font-weight: 700; font-size: 13px; color: #10b981;">All systems secure</div>
+                                        <div style="font-size: 11px; color: var(--text-secondary);">Last audit: 15 May 2026, 10:15 AM</div>
+                                    </div>
+                                </div>
+                                <div style="width: 100%; background: var(--bg-primary); height: 8px; border-radius: 4px; overflow: hidden; margin-bottom: 6px;">
+                                    <div style="width: 100%; background: #10b981; height: 100%;"></div>
+                                </div>
+                                <div style="text-align: right; font-size: 11px; font-weight: 700; color: #10b981; margin-bottom: 12px;">100%</div>
+                                <div style="text-align: center; border-top: 1px solid var(--border-color); padding-top: 10px;">
+                                    <a href="javascript:void(0)" onclick="switchPane('admin-audit')" style="font-size: 12px; font-weight: 600; color: var(--primary-blue); text-decoration: none;">View Compliance Report</a>
+                                </div>
+                            </div>
+
+                            <div class="panel-card" style="flex: 1;">
+                                <h3 class="panel-title" style="margin: 0 0 12px 0; font-size: 15px;">Quick Actions</h3>
+                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+                                    <button type="button" class="btn-secondary" style="padding: 8px 10px; font-size: 12px; text-align: left; display: flex; align-items: center; gap: 6px;" onclick="switchPane('admin-users')">
+                                        <i data-lucide="user-plus" style="width: 14px; height: 14px; color: #3b82f6;"></i> Add New Doctor
+                                    </button>
+                                    <button type="button" class="btn-secondary" style="padding: 8px 10px; font-size: 12px; text-align: left; display: flex; align-items: center; gap: 6px;" onclick="switchPane('admin-users')">
+                                        <i data-lucide="user-plus" style="width: 14px; height: 14px; color: #10b981;"></i> Add New Patient
+                                    </button>
+                                    <button type="button" class="btn-secondary" style="padding: 8px 10px; font-size: 12px; text-align: left; display: flex; align-items: center; gap: 6px;" onclick="showToast('Hospital linkage wizard opened.', 'info')">
+                                        <i data-lucide="building" style="width: 14px; height: 14px; color: #8b5cf6;"></i> Add Hospital
+                                    </button>
+                                    <button type="button" class="btn-secondary" style="padding: 8px 10px; font-size: 12px; text-align: left; display: flex; align-items: center; gap: 6px;" onclick="showToast('System announcement dispatched.', 'success')">
+                                        <i data-lucide="send" style="width: 14px; height: 14px; color: #f59e0b;"></i> Send Announcement
+                                    </button>
+                                    <button type="button" class="btn-secondary" style="padding: 8px 10px; font-size: 12px; text-align: left; display: flex; align-items: center; gap: 6px;" onclick="switchPane('documents')">
+                                        <i data-lucide="download" style="width: 14px; height: 14px; color: #06b6d4;"></i> Export Reports
+                                    </button>
+                                    <button type="button" class="btn-secondary" style="padding: 8px 10px; font-size: 12px; text-align: left; display: flex; align-items: center; gap: 6px;" onclick="showToast('System database backup completed.', 'success')">
+                                        <i data-lucide="database" style="width: 14px; height: 14px; color: #64748b;"></i> System Backup
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Admin Pane 2: Patient Inquiry & Email Forwarding Center -->
+                <section id="pane-admin-inquiries" class="content-pane hidden">
+                    <div class="panel-card" style="margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                            <div>
+                                <h3 class="panel-title">Patient Inquiry & Email Forwarding Center</h3>
+                                <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 0 0;">Review clinical questions, medical emails, and comments submitted by patients, and dispatch/forward them directly to their assigned specialist doctors.</p>
+                            </div>
+                            <span id="admin-unforwarded-count" class="badge" style="background: rgba(59, 130, 246, 0.1); color: #3b82f6; font-weight: 600;">2 Unforwarded Patient Emails</span>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-admin-inquiries">
+                                <thead>
+                                    <tr>
+                                        <th>Patient Sender</th>
+                                        <th>Subject / Email Content</th>
+                                        <th>Date Received</th>
+                                        <th>Assigned Doctor</th>
+                                        <th>Current Status</th>
+                                        <th>Action / Forward</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="row-inq-1">
+                                        <td style="font-weight: 600;">Spoorthi Verma<br><span style="font-size:11px;color:#64748b;">spoorthi.verma@healthvault.pro</span></td>
+                                        <td><strong>Post-Lithotripsy Renal Diet Inquiry:</strong><br><span style="font-size:12px;color:var(--text-secondary);">"I have mild flank discomfort after calculus lithotripsy. Should I increase potassium citrate dosage or adjust water intake?"</span></td>
+                                        <td>07 Jul 2026<br><span style="font-size:11px;color:#64748b;">10:45 AM</span></td>
+                                        <td style="font-weight: 500; color: #3b82f6;">Dr. Rohan Sharma<br><span style="font-size:11px;color:#64748b;">Urology Specialist</span></td>
+                                        <td><span class="badge badge-warning" id="status-inq-1">Pending Forward</span></td>
+                                        <td>
+                                            <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px; background: #3b82f6;" onclick="forwardPatientEmail(1, 'Spoorthi Verma', 'Dr. Rohan Sharma (Urology)')">
+                                                <i data-lucide="mail-forward" style="width:14px;height:14px;"></i> Forward to Doc
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-inq-2">
+                                        <td style="font-weight: 600;">Sunitha Rao (Guardian)<br><span style="font-size:11px;color:#64748b;">for Ramesh Rao (Emergency)</span></td>
+                                        <td><strong>24h EEG Monitoring & Seizure Titration:</strong><br><span style="font-size:12px;color:var(--text-secondary);">"Ramesh experienced mild tremors at night. We uploaded his emergency EEG rhythm log. Please advise if Levetiracetam should be 750mg."</span></td>
+                                        <td>06 Jul 2026<br><span style="font-size:11px;color:#64748b;">08:15 PM</span></td>
+                                        <td style="font-weight: 500; color: #8b5cf6;">Dr. Priya Menon<br><span style="font-size:11px;color:#64748b;">Neurology Specialist</span></td>
+                                        <td><span class="badge badge-warning" id="status-inq-2">Pending Forward</span></td>
+                                        <td>
+                                            <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px; background: #8b5cf6;" onclick="forwardPatientEmail(2, 'Ramesh Rao', 'Dr. Priya Menon (Neurology)')">
+                                                <i data-lucide="mail-forward" style="width:14px;height:14px;"></i> Forward to Doc
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="row-inq-3">
+                                        <td style="font-weight: 600;">Sarah Williams<br><span style="font-size:11px;color:#64748b;">sarah.williams@healthvault.pro</span></td>
+                                        <td><strong>Annual Cardiology Lipid Profile Upload:</strong><br><span style="font-size:12px;color:var(--text-secondary);">"Uploaded my recent fasting cholesterol lab tests from Demo Diagnostic Center."</span></td>
+                                        <td>04 Jul 2026<br><span style="font-size:11px;color:#64748b;">02:30 PM</span></td>
+                                        <td style="font-weight: 500; color: #10b981;">Dr. Robert Wilson<br><span style="font-size:11px;color:#64748b;">Cardiology Specialist</span></td>
+                                        <td><span class="badge badge-normal">Forwarded to Doctor</span></td>
+                                        <td>
+                                            <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" disabled>
+                                                <i data-lucide="check" style="width:14px;height:14px;"></i> Shared with Doc
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Admin Pane 3: Upgraded vs Free Community Management -->
+                <section id="pane-admin-community" class="content-pane hidden">
+                    <div class="panel-card" style="margin-bottom: 24px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; flex-wrap: wrap; gap: 12px;">
+                            <div>
+                                <h3 class="panel-title">Upgraded vs Free Community Subscription Management</h3>
+                                <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 0 0;">Control patient community tiers. Upgraded patients contribute to website revenue and unlock AI Health Insights, Priority Doctor Triage, and 24/7 ICU QR Grid access.</p>
+                            </div>
+                            <div style="display: flex; gap: 12px;">
+                                <span class="badge" style="background: rgba(139, 92, 246, 0.15); color: #8b5cf6; font-size: 13px; padding: 6px 12px;">👑 1,420 Upgraded Members</span>
+                                <span class="badge" style="background: rgba(100, 116, 139, 0.15); color: #64748b; font-size: 13px; padding: 6px 12px;">🆓 8,580 Free Members</span>
+                            </div>
+                        </div>
+
+                        <div class="table-responsive">
+                            <table class="data-table" id="table-admin-community">
+                                <thead>
+                                    <tr>
+                                        <th>Patient Account</th>
+                                        <th>Primary Hospital / District Wing</th>
+                                        <th>Current Community Tier</th>
+                                        <th>Subscription Benefits Active</th>
+                                        <th>Annual Contribution</th>
+                                        <th>Community Management Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr id="comm-row-1">
+                                        <td style="font-weight: 600;">Ramesh Rao<br><span style="font-size:11px;color:#64748b;">ramesh.rao@healthvault.pro</span></td>
+                                        <td>Demo Healthcare Network (Neurology)<br><span style="font-size:11px;color:#ef4444;font-weight:600;">Emergency Neuro Suite</span></td>
+                                        <td><span class="badge" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6; font-weight: 700; border: 1px solid #8b5cf6;" id="comm-badge-1">👑 Upgraded Community</span></td>
+                                        <td style="font-size: 12px;">24/7 Emergency QR Access, Priority Alert Triage</td>
+                                        <td style="font-weight: 700; color: #10b981;" id="comm-fee-1">Simulated Fee Contribution</td>
+                                        <td>
+                                            <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="toggleCommunityTier(1, 'Ramesh Rao', false)">
+                                                Downgrade to Free ⬇️
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="comm-row-2">
+                                        <td style="font-weight: 600;">Spoorthi Verma<br><span style="font-size:11px;color:#64748b;">spoorthi.verma@healthvault.pro</span></td>
+                                        <td>Demo Healthcare Network (Urology)<br><span style="font-size:11px;color:#3b82f6;font-weight:600;">Urology Recovery Wing</span></td>
+                                        <td><span class="badge" style="background: rgba(139, 92, 246, 0.2); color: #8b5cf6; font-weight: 700; border: 1px solid #8b5cf6;" id="comm-badge-2">👑 Upgraded Community</span></td>
+                                        <td style="font-size: 12px;">Renal Stone Risk Insights, Direct Doctor Chat Forwarding</td>
+                                        <td style="font-weight: 700; color: #10b981;" id="comm-fee-2">Simulated Fee Contribution</td>
+                                        <td>
+                                            <button type="button" class="btn-secondary" style="padding: 6px 12px; font-size: 12px;" onclick="toggleCommunityTier(2, 'Spoorthi Verma', false)">
+                                                Downgrade to Free ⬇️
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="comm-row-3">
+                                        <td style="font-weight: 600;">Sarah Williams<br><span style="font-size:11px;color:#64748b;">sarah.williams@healthvault.pro</span></td>
+                                        <td>Demo Diagnostic Center Vizag<br><span style="font-size:11px;color:#10b981;font-weight:600;">General Cardiology</span></td>
+                                        <td><span class="badge" style="background: rgba(100, 116, 139, 0.15); color: #64748b; font-weight: 600;" id="comm-badge-3">🆓 Free Community</span></td>
+                                        <td style="font-size: 12px;">Standard EHR Storage, Routine Appointment Booking</td>
+                                        <td style="font-weight: 500; color: #64748b;" id="comm-fee-3">Simulated Standard Tier</td>
+                                        <td>
+                                            <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px; background: #8b5cf6;" onclick="toggleCommunityTier(3, 'Sarah Williams', true)">
+                                                Upgrade Membership ⬆️
+                                            </button>
+                                        </td>
+                                    </tr>
+                                    <tr id="comm-row-4">
+                                        <td style="font-weight: 600;">Rajesh Verma<br><span style="font-size:11px;color:#64748b;">rajesh.verma@healthvault.pro</span></td>
+                                        <td>Demo Specialty Clinic Vizag<br><span style="font-size:11px;color:#06b6d4;font-weight:600;">Orthopedic Outpatient</span></td>
+                                        <td><span class="badge" style="background: rgba(100, 116, 139, 0.15); color: #64748b; font-weight: 600;" id="comm-badge-4">🆓 Free Community</span></td>
+                                        <td style="font-size: 12px;">Standard EHR Storage, Prescription Archive</td>
+                                        <td style="font-weight: 500; color: #64748b;" id="comm-fee-4">Simulated Standard Tier</td>
+                                        <td>
+                                            <button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px; background: #8b5cf6;" onclick="toggleCommunityTier(4, 'Rajesh Verma', true)">
+                                                Upgrade Membership ⬆️
+                                            </button>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Admin Pane 4: System Security & Compliance Audit Logs -->
+                <section id="pane-admin-audit" class="content-pane hidden">
+                    <div class="panel-card" style="margin-bottom: 24px;">
+                        <h3 class="panel-title">System Security & Compliance Audit Trail (OWASP Top 10)</h3>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 16px 0;">Monitor cryptographic token validity, database concurrency locks, and active RBAC security sessions.</p>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Timestamp</th>
+                                        <th>Event Severity</th>
+                                        <th>Security Action</th>
+                                        <th>Target Identity / Role</th>
+                                        <th>IP & Telemetry</th>
+                                        <th>Compliance Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>08 Jul 2026, 01:15 AM</td>
+                                        <td><span class="badge badge-normal">INFO</span></td>
+                                        <td>JWT Token Generation (UUID4 jti)</td>
+                                        <td>admin@healthvault.pro (System Administrator)</td>
+                                        <td>127.0.0.1 [Visakhapatnam Gateway]</td>
+                                        <td><span class="badge badge-normal">OWASP Verified</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>07 Jul 2026, 11:30 PM</td>
+                                        <td><span class="badge badge-normal">INFO</span></td>
+                                        <td>Emergency QR Code Medical Access</td>
+                                        <td>ramesh.rao@healthvault.pro (Active Emergency)</td>
+                                        <td>192.168.1.104 [Demo Emergency Grid]</td>
+                                        <td><span class="badge badge-normal">Authorized</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>07 Jul 2026, 08:45 PM</td>
+                                        <td><span class="badge badge-normal">INFO</span></td>
+                                        <td>Urology Consultation Note Committed</td>
+                                        <td>dr.rohan@healthvault.pro (Urology Specialist)</td>
+                                        <td>10.0.4.12 [Demo Healthcare Network Arilova]</td>
+                                        <td><span class="badge badge-normal">FHIR Validated</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- ========================================================= -->
+                <!-- 5. DOCTOR / PHYSICIAN PORTAL PANES -->
+                <!-- ========================================================= -->
+
+                <!-- Doctor Pane 1: Triage & Overview -->
+                <section id="pane-doctor-overview" class="content-pane hidden">
+                    <div class="metrics-grid" style="grid-template-columns: repeat(3, 1fr); gap: 16px; margin-bottom: 24px;">
+                        <div class="metric-card" style="border-left: 4px solid #3b82f6;">
+                            <div class="metric-header">
+                                <span class="metric-label">Assigned Patients</span>
+                                <i data-lucide="users" style="color: #3b82f6;"></i>
+                            </div>
+                            <div class="metric-value">18 Patients</div>
+                            <div class="metric-status status-normal">Active clinical queue</div>
+                        </div>
+                        <div class="metric-card" style="border-left: 4px solid #ef4444;">
+                            <div class="metric-header">
+                                <span class="metric-label">Critical / Urgent Triage</span>
+                                <i data-lucide="alert-circle" style="color: #ef4444;"></i>
+                            </div>
+                            <div class="metric-value" style="color: #ef4444;">2 ICU / Urgent</div>
+                            <div class="metric-status status-alert">Requires immediate review</div>
+                        </div>
+                        <div class="metric-card" style="border-left: 4px solid #10b981;">
+                            <div class="metric-header">
+                                <span class="metric-label">Consultations Completed</span>
+                                <i data-lucide="check-circle-2" style="color: #10b981;"></i>
+                            </div>
+                            <div class="metric-value">142 Visits</div>
+                            <div class="metric-status status-normal">Visakhapatnam Grid</div>
+                        </div>
+                    </div>
+
+                    <div class="panel-card">
+                        <h3 class="panel-title" style="margin-bottom: 16px;">Physician Patient Triage Queue</h3>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Patient Name</th>
+                                        <th>Clinical Domain / Condition</th>
+                                        <th>Latest Vital Readings</th>
+                                        <th>Triage Priority</th>
+                                        <th>Forwarded Inquiries</th>
+                                        <th>Action</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td style="font-weight: 600;">Ramesh Rao<br><span style="font-size:11px;color:#64748b;">Emergency Neuro Patient</span></td>
+                                        <td>Acute Neurological Monitoring & Spikes<br><span style="font-size:11px;color:#8b5cf6;">Demo Healthcare Network Neuro Suite</span></td>
+                                        <td><span style="color:#ef4444;font-weight:600;">168/104 BP</span> | 118 bpm | 285 mg/dL</td>
+                                        <td><span class="badge badge-alert">🚨 ACTIVE EMERGENCY</span></td>
+                                        <td><span class="badge" style="background:rgba(139,92,246,0.15);color:#8b5cf6;">1 EEG Rhythm Inquiry</span></td>
+                                        <td><button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="switchPane('doctor-patients')">Open EHR Review →</button></td>
+                                    </tr>
+                                    <tr>
+                                        <td style="font-weight: 600;">Spoorthi Verma<br><span style="font-size:11px;color:#64748b;">Recovered Urology Patient</span></td>
+                                        <td>Post-Lithotripsy Renal Calculus Colic<br><span style="font-size:11px;color:#3b82f6;">Demo Healthcare Network Urology Suite</span></td>
+                                        <td><span style="color:#10b981;font-weight:600;">118/78 BP</span> | 68 bpm | Stable</td>
+                                        <td><span class="badge badge-normal">Routine Follow-up</span></td>
+                                        <td><span class="badge" style="background:rgba(59,130,246,0.15);color:#3b82f6;">1 Diet & Stone Inquiry</span></td>
+                                        <td><button type="button" class="btn-primary" style="padding: 6px 12px; font-size: 12px;" onclick="switchPane('doctor-patients')">Open EHR Review →</button></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Doctor Pane 2: Patient EHR Review -->
+                <section id="pane-doctor-patients" class="content-pane hidden">
+                    <div class="panel-card">
+                        <h3 class="panel-title">Comprehensive Patient Electronic Health Record (EHR)</h3>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 16px 0;">Review clinical history, diagnostic labs, and active medication regimens across the Visakhapatnam Medical Grid.</p>
+                        <div style="background: var(--bg-primary); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;">
+                                <div>
+                                    <h4 style="margin: 0; font-size: 16px;">Active Patient Profile: <span style="color: #3b82f6;">Ramesh Rao (DOB: 14 Aug 1978)</span></h4>
+                                    <p style="margin: 4px 0 0 0; font-size: 13px; color: var(--text-secondary);">Emergency Guardian: Sunitha Rao (+91 98480 12345) | Blood Group: O Positive (O+)</p>
+                                </div>
+                                <span class="badge" style="background: rgba(239, 68, 68, 0.15); color: #ef4444; font-weight: 700;">🚨 EMERGENCY QR ACTIVE</span>
+                            </div>
+                        </div>
+                        <div style="display: flex; gap: 12px;">
+                            <button type="button" class="btn-primary" onclick="switchPane('doctor-consults')"><i data-lucide="file-plus" style="width:16px;height:16px;"></i> Add Consult Note & e-Rx</button>
+                            <button type="button" class="btn-secondary" onclick="switchPane('doctor-schedule')"><i data-lucide="calendar" style="width:16px;height:16px;"></i> Schedule Follow-up Visit</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Doctor Pane 3: Consult Notes & e-Rx -->
+                <section id="pane-doctor-consults" class="content-pane hidden">
+                    <div class="panel-card">
+                        <h3 class="panel-title">Record Clinical Consultation & e-Prescription</h3>
+                        <form onsubmit="event.preventDefault(); showToast('Clinical consultation & e-prescription saved to patient EHR!', 'success'); switchPane('doctor-overview');">
+                            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+                                <div class="form-group">
+                                    <label class="form-label">Select Patient</label>
+                                    <select class="form-input">
+                                        <option>Ramesh Rao (Emergency Neuro ICU)</option>
+                                        <option>Spoorthi Verma (Urology Recovery)</option>
+                                    </select>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Clinical Diagnosis / ICD-10 Code</label>
+                                    <input type="text" class="form-input" value="G40.909 - Epilepsy / Seizure Disorder (Titration Phase)" required>
+                                </div>
+                            </div>
+                            <div class="form-group" style="margin-bottom: 16px;">
+                                <label class="form-label">Physician Clinical Observations & Consult Notes</label>
+                                <textarea class="form-control" rows="4" placeholder="Enter clinical assessment, vital vitals stability, and dietary/therapy instructions...">Patient exhibited nocturnal tremor activity. EEG rhythm log reveals mild temporal spiking. Advised increasing Levetiracetam dosage to 750mg BID. Continued monitoring in Demo Healthcare Network Neuro Suite.</textarea>
+                            </div>
+                            <div style="background: var(--bg-primary); padding: 16px; border-radius: 8px; border: 1px solid var(--border-color); margin-bottom: 20px;">
+                                <h4 style="margin: 0 0 12px 0; font-size: 14px; color: #3b82f6;">Prescribe Medication Regimen (e-Rx)</h4>
+                                <div style="display: grid; grid-template-columns: 2fr 1fr 1fr; gap: 12px;">
+                                    <input type="text" class="form-input" placeholder="Medication Name (e.g. Levetiracetam)" value="Levetiracetam">
+                                    <input type="text" class="form-input" placeholder="Dosage (e.g. 750mg)" value="750mg">
+                                    <input type="text" class="form-input" placeholder="Frequency (e.g. Twice Daily)" value="Twice Daily (BID)">
+                                </div>
+                            </div>
+                            <button type="submit" class="btn-primary">Commit Consultation & Authorize e-Rx</button>
+                        </form>
+                    </div>
+                </section>
+
+                <!-- Doctor Pane 4: Schedule & Appointments -->
+                <section id="pane-doctor-schedule" class="content-pane hidden">
+                    <div class="panel-card">
+                        <h3 class="panel-title">Physician Appointment Calendar & Hospital Roster</h3>
+                        <p style="font-size: 13px; color: var(--text-secondary); margin: 4px 0 16px 0;">Manage upcoming patient consultations across Demo Healthcare Network and Sample Clinical Centers.</p>
+                        <div class="table-responsive">
+                            <table class="data-table">
+                                <thead>
+                                    <tr>
+                                        <th>Time / Date</th>
+                                        <th>Patient Name</th>
+                                        <th>Appointment Type</th>
+                                        <th>Hospital Location / Wing</th>
+                                        <th>Status</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>08 Jul 2026, 11:00 AM</td>
+                                        <td style="font-weight: 600;">Ramesh Rao</td>
+                                        <td>Post-Seizure EEG Rhythm Review</td>
+                                        <td>Demo Healthcare Network Vizag (Neuro Wing)</td>
+                                        <td><span class="badge badge-alert">Confirmed</span></td>
+                                    </tr>
+                                    <tr>
+                                        <td>09 Jul 2026, 03:30 PM</td>
+                                        <td style="font-weight: 600;">Spoorthi Verma</td>
+                                        <td>Post-Lithotripsy Ultrasound Follow-up</td>
+                                        <td>Demo Healthcare Network Arilova (Urology Suite)</td>
+                                        <td><span class="badge badge-normal">Confirmed</span></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </section>
+            </main>
+
+            <!-- Platform Footer -->
+            <footer class="platform-footer">
+                <span>This platform is for informational purposes only and not a substitute for professional medical advice.</span>
+                <span>Need Help? Contact Support 🎧</span>
+            </footer>
+        </div>
+    </div>
+
+    <!-- 3. DIALOG MODALS OVERLAYS -->
+    
+    <!-- Modal: Add Medical Condition -->
+    <div id="modal-condition" class="modal-overlay hidden">
+        <div class="modal-box">
+            <button type="button" class="modal-close" onclick="document.getElementById('modal-condition').classList.add('hidden')"><i data-lucide="x"></i></button>
+            <h3 class="modal-title">Log Medical Diagnose</h3>
+            <form id="form-condition">
+                <div class="form-group">
+                    <label class="form-label">Condition Name</label>
+                    <input type="text" id="cond-name" class="form-input" required placeholder="e.g. Essential Hypertension">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Current Status</label>
+                    <select id="cond-status" class="form-input">
+                        <option value="Active">Active</option>
+                        <option value="Resolved">Resolved</option>
+                        <option value="In Remission">In Remission</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Date Diagnosed</label>
+                    <input type="date" id="cond-date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Clinical Notes</label>
+                    <textarea id="cond-notes" class="form-control" rows="3" placeholder="Physician notes..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('modal-condition').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Condition Log</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add Prescription Medication -->
+    <div id="modal-medication" class="modal-overlay hidden">
+        <div class="modal-box">
+            <button type="button" class="modal-close" onclick="document.getElementById('modal-medication').classList.add('hidden')"><i data-lucide="x"></i></button>
+            <h3 class="modal-title">Record Prescription Therapy</h3>
+            <form id="form-medication">
+                <div class="form-group">
+                    <label class="form-label">Medication Name</label>
+                    <input type="text" id="med-name" class="form-input" required placeholder="e.g. Amlodipine">
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Dosage</label>
+                        <input type="text" id="med-dosage" class="form-input" required placeholder="5mg">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Frequency</label>
+                        <input type="text" id="med-frequency" class="form-input" required placeholder="Once daily">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Start Date</label>
+                        <input type="date" id="med-start-date" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">End Date (Optional)</label>
+                        <input type="date" id="med-end-date" class="form-input">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Status</label>
+                        <select id="med-status" class="form-input">
+                            <option value="Active">Active</option>
+                            <option value="Completed">Completed</option>
+                            <option value="Discontinued">Discontinued</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Adherence Rate (%)</label>
+                        <input type="number" id="med-adherence" class="form-input" value="100" min="0" max="100">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('modal-medication').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Medication</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Record Doctor Visit -->
+    <div id="modal-visit" class="modal-overlay hidden">
+        <div class="modal-box">
+            <button type="button" class="modal-close" onclick="document.getElementById('modal-visit').classList.add('hidden')"><i data-lucide="x"></i></button>
+            <h3 class="modal-title">Record Doctor Consult Notes</h3>
+            <form id="form-visit">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Doctor Name</label>
+                        <input type="text" id="visit-doctor" class="form-input" required placeholder="Dr. Rohan Sharma / Dr. Priya Menon">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Specialty</label>
+                        <input type="text" id="visit-specialty" class="form-input" required placeholder="Urology / Neurology">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Consultation Date</label>
+                    <input type="date" id="visit-date" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Symptoms Presented</label>
+                    <input type="text" id="visit-symptoms" class="form-input" required placeholder="Mild headache, routine follow-up">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Clinical Diagnosis</label>
+                    <input type="text" id="visit-diagnosis" class="form-input" required placeholder="BP under control">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Physician Instructions & Plan</label>
+                    <textarea id="visit-notes" class="form-control" rows="3" placeholder="Continue current therapy..."></textarea>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('modal-visit').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Consult Notes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Record Immunization Vaccine -->
+    <div id="modal-vaccination" class="modal-overlay hidden">
+        <div class="modal-box">
+            <button type="button" class="modal-close" onclick="document.getElementById('modal-vaccination').classList.add('hidden')"><i data-lucide="x"></i></button>
+            <h3 class="modal-title">Log Immunization Record</h3>
+            <form id="form-vaccination">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Vaccine Name</label>
+                        <input type="text" id="vacc-name" class="form-input" required placeholder="Influenza Vaccine">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Dose Number</label>
+                        <input type="text" id="vacc-dose" class="form-input" required placeholder="Annual Booster">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Date Administered</label>
+                        <input type="date" id="vacc-date" class="form-input">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Next Booster Due Date</label>
+                        <input type="date" id="vacc-due" class="form-input">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select id="vacc-status" class="form-input">
+                        <option value="Completed">Completed</option>
+                        <option value="Scheduled">Scheduled</option>
+                        <option value="Overdue">Overdue</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('modal-vaccination').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Vaccine Record</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Schedule Appointment -->
+    <div id="modal-appointment" class="modal-overlay hidden">
+        <div class="modal-box">
+            <button type="button" class="modal-close" onclick="document.getElementById('modal-appointment').classList.add('hidden')"><i data-lucide="x"></i></button>
+            <h3 class="modal-title">Schedule Doctor Visit Appointment</h3>
+            <form id="form-appointment">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Doctor Name</label>
+                        <input type="text" id="app-doctor" class="form-input" required placeholder="Dr. Rajesh Kumar">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Specialty</label>
+                        <input type="text" id="app-specialty" class="form-input" required placeholder="General Medicine">
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Appointment Date & Time</label>
+                    <input type="datetime-local" id="app-datetime" class="form-input" required>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Clinic / Hospital Location</label>
+                    <input type="text" id="app-location" class="form-input" required placeholder="Demo Healthcare Network, Suite 402">
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('modal-appointment').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="btn-primary">Confirm Booking</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Upload Medical Document Report -->
+    <div id="modal-document" class="modal-overlay hidden">
+        <div class="modal-box">
+            <button type="button" class="modal-close" onclick="document.getElementById('modal-document').classList.add('hidden')"><i data-lucide="x"></i></button>
+            <h3 class="modal-title">Upload Diagnostic File Report</h3>
+            <form id="form-document" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label class="form-label">Document Title</label>
+                    <input type="text" id="doc-title" class="form-input" required placeholder="Complete Blood Count (CBC) Panel">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Description / Summary</label>
+                    <input type="text" id="doc-desc" class="form-input" required placeholder="Annual routine lab screening report">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Select File (PDF, PNG, JPG)</label>
+                    <input type="file" id="doc-file" class="form-input" style="padding: 8px;" required>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('modal-document').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="btn-primary">Upload Document</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Add Emergency Medical Contact -->
+    <div id="modal-emergency-contact" class="modal-overlay hidden">
+        <div class="modal-box">
+            <button type="button" class="modal-close" onclick="document.getElementById('modal-emergency-contact').classList.add('hidden')"><i data-lucide="x"></i></button>
+            <h3 class="modal-title">Add Emergency Contact Coordinates</h3>
+            <form id="form-emergency-contact">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Contact Name</label>
+                        <input type="text" id="em-contact-name" class="form-input" required placeholder="Sunitha Rao">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Relationship</label>
+                        <input type="text" id="em-contact-relationship" class="form-input" required placeholder="Spouse / Parent">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" id="em-contact-phone" class="form-input" required placeholder="+1 (555) 019-2831">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Email Address</label>
+                        <input type="email" id="em-contact-email" class="form-input" placeholder="contact@email.com">
+                    </div>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px;">
+                    <div class="form-group">
+                        <label class="form-label">Blood Group</label>
+                        <select id="em-contact-blood" class="form-input">
+                            <option value="O+">O Positive (O+)</option>
+                            <option value="O-">O Negative (O-)</option>
+                            <option value="A+">A Positive (A+)</option>
+                            <option value="A-">A Negative (A-)</option>
+                            <option value="B+">B Positive (B+)</option>
+                            <option value="B-">B Negative (B-)</option>
+                            <option value="AB+">AB Positive (AB+)</option>
+                            <option value="AB-">AB Negative (AB-)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Notes / Instructions</label>
+                        <input type="text" id="em-contact-notes" class="form-input" placeholder="Primary emergency decision maker">
+                    </div>
+                </div>
+                <div class="modal-actions">
+                    <button type="button" class="btn-secondary" onclick="document.getElementById('modal-emergency-contact').classList.add('hidden')">Cancel</button>
+                    <button type="submit" class="btn-primary">Save Emergency Contact</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION CONTAINER -->
+    <div id="toast-container"></div>
+
+    <!-- APPLICATION SCRIPTS -->
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/charts.js"></script>
+    <script src="js/emergency.js"></script>
+    <script src="js/app.js"></script>
+</body>
+</html>
